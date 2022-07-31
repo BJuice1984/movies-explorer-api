@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // eslint-disable-next-line func-names

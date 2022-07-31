@@ -4,19 +4,55 @@ const NotFoundError = require('../errors/not-found-err');
 const ForbiddenError = require('../errors/forbidden-err');
 const BadDataError = require('../errors/bad-data-err');
 
-module.exports.createCard = (req, res, next) => {
-  const { name, link } = req.body;
+module.exports.getMyMovies = (req, res, next) => {
+  Movie.find({})
+    .then((movies) => res.send(movies))
+    .catch(next);
+};
+
+module.exports.createMovie = (req, res, next) => {
+  const {
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    movieId,
+    nameRU,
+    nameEN,
+  } = req.body;
   const owner = req.user._id;
-  const likes = [];
   Movie.create({
-    name, link, owner, likes,
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    owner,
+    movieId,
+    nameRU,
+    nameEN,
   })
-    .then((card) => res.status(OkCodeCreated).send({
-      name: card.name,
-      link: card.link,
-      owner: card.owner,
-      likes: card.likes,
-      _id: card._id,
+    .then((movie) => res.status(OkCodeCreated).send({
+      country: movie.country,
+      director: movie.director,
+      duration: movie.duration,
+      year: movie.year,
+      description: movie.description,
+      image: movie.image,
+      trailerLink: movie.trailerLink,
+      thumbnail: movie.thumbnail,
+      owner: movie.owner,
+      movieId: movie.movieId,
+      nameRU: movie.nameRU,
+      nameEN: movie.nameEN,
+      _mongoId: movie._id,
     }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -27,15 +63,15 @@ module.exports.createCard = (req, res, next) => {
     });
 };
 
-module.exports.deleteCard = (req, res, next) => {
-  Movie.findById(req.params.cardId)
-    .orFail(() => { throw new NotFoundError('Ошибка. Карточка не найдена'); })
-    .then((card) => {
-      if (!card.owner.equals(req.user._id)) {
-        return next(new ForbiddenError('Ошибка. Нельзя удалить чужую карточку'));
+module.exports.deleteMovie = (req, res, next) => {
+  Movie.findById(req.params.movieId)
+    .orFail(() => { throw new NotFoundError('Ошибка. Фильм не найден'); })
+    .then((movie) => {
+      if (!movie.owner.equals(req.user._id)) {
+        return next(new ForbiddenError('Ошибка. Нельзя удалить чужой фильм'));
       }
-      return card.remove()
-        .then(() => res.send({ message: 'Карточка удалена' }));
+      return movie.remove()
+        .then(() => res.send({ message: 'Фильм удален из избранного' }));
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
