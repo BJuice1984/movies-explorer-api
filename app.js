@@ -4,9 +4,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
-const cors = require('cors');
-const helmet = require('helmet');
-const { limiter } = require('./helpers/limiter');
+const { secure } = require('./middlewares/secure');
 const routes = require('./routes/index');
 const { ErrCodeServer } = require('./costants/constants');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -18,25 +16,11 @@ mongoose.connect(NODE_ENV === 'production' ? MONGO_ADRESS : 'mongodb://localhost
   useNewUrlParser: true,
 });
 
-const allowedCors = [
-  'http://api.mesto.bjuice.nomoredomains.xyz',
-  'http://mesto.bjuice.nomoredomains.xyz',
-  'https://api.mesto.bjuice.nomoredomains.xyz',
-  'https://mesto.bjuice.nomoredomains.xyz',
-];
+secure(app);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// Apply the rate limiting middleware to all requests
-app.use(limiter);
-
-app.use(helmet());
-app.use(cors({
-  origin: allowedCors,
-  credentials: true,
-}));
 
 app.get('/crash-test', () => {
   setTimeout(() => {
