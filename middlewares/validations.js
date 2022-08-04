@@ -29,7 +29,7 @@ module.exports.validateCreateMovie = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    lmage: Joi.string().required().regex(linkRegex),
+    image: Joi.string().required().regex(linkRegex),
     trailerLink: Joi.string().required().regex(linkRegex),
     thumbnail: Joi.string().required().regex(linkRegex),
     owner: Joi.string().alphanum().hex().length(24),
