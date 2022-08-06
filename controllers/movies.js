@@ -63,7 +63,6 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  console.log(req.params._id);
   Movie.findById(req.params._id)
     .orFail(() => { throw new NotFoundError('Ошибка. Фильм не найден'); })
     .then((movie) => {
