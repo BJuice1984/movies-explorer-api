@@ -52,7 +52,6 @@ module.exports.createMovie = (req, res, next) => {
       movieId: movie.movieId,
       nameRU: movie.nameRU,
       nameEN: movie.nameEN,
-      _mongoId: movie._id,
     }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -64,7 +63,8 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  console.log(req.params._id);
+  Movie.findById(req.params._id)
     .orFail(() => { throw new NotFoundError('Ошибка. Фильм не найден'); })
     .then((movie) => {
       if (!movie.owner.equals(req.user._id)) {
