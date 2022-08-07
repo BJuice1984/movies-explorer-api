@@ -23,10 +23,6 @@ module.exports.createUser = (req, res, next) => {
     name, email, password,
   } = req.body;
 
-  if (!email || !password) {
-    throw new BadDataError('Ошибка. Данные не переданы');
-  }
-
   bcrypt
     .hash(password, SALT_ROUNDS)
     .then((hash) => User.create({
@@ -71,10 +67,6 @@ module.exports.updateUser = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    throw new BadDataError('Ошибка. Данные не переданы');
-  }
 
   return User.findUserByCredentials(email, password)
     .then((user) => generateToken({ _id: user._id }))
