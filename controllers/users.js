@@ -6,6 +6,9 @@ const NotFoundError = require('../errors/not-found-err');
 const UnauthorizationError = require('../errors/unauth-err');
 const BadDataError = require('../errors/bad-data-err');
 const ConflictEmailError = require('../errors/coflict-err');
+const {
+  BadDataErrMessage, NotFoundErrMessage, UnauthorizationErrMessage, ConflictEmailErrMessage,
+} = require('../costants/constants');
 
 const MONGO_DUPLICATE_ERROR_CODE = 11000;
 const SALT_ROUNDS = 10;
@@ -13,7 +16,7 @@ const SALT_ROUNDS = 10;
 module.exports.getMyProfile = (req, res, next) => {
   const { _id } = req.user;
   User.findById(_id)
-    .orFail(() => { throw new NotFoundError('Ошибка. Пользователь не найден'); })
+    .orFail(() => { throw new NotFoundError(NotFoundErrMessage); })
     .then((user) => res.send(user))
     .catch(next);
 };
@@ -37,11 +40,11 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
-        next(new ConflictEmailError('Ошибка. Пользователь с таким email уже зарегистрирован'));
+        next(new ConflictEmailError(ConflictEmailErrMessage));
         return;
       }
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadDataError('Ошибка. Данные не корректны'));
+        next(new BadDataError(BadDataErrMessage));
         return;
       }
       next(err);
@@ -54,11 +57,15 @@ module.exports.updateUser = (req, res, next) => {
     new: true,
     runValidators: true,
   })
-    .orFail(() => { throw new NotFoundError('Ошибка. Пользователь не найден'); })
+    .orFail(() => { throw new NotFoundError(NotFoundErrMessage); })
     .then((user) => res.send(user))
     .catch((err) => {
+      if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
+        next(new ConflictEmailError(ConflictEmailErrMessage));
+        return;
+      }
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadDataError('Ошибка. Данные не корректны'));
+        next(new BadDataError(BadDataErrMessage));
         return;
       }
       next(err);
@@ -80,7 +87,7 @@ module.exports.login = (req, res, next) => {
         .send({ token });
     })
     .catch(() => {
-      next(new UnauthorizationError('Ошибка. Неправильные почта или пароль'));
+      next(new UnauthorizationError(UnauthorizationErrMessage));
     });
 };
 

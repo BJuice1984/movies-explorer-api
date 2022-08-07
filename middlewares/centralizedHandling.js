@@ -1,4 +1,4 @@
-const { ErrCodeServer } = require('../costants/constants');
+const { ErrCodeServer, ErrCodeServerMessage } = require('../costants/constants');
 
 module.exports.centralizedHandling = ((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
@@ -9,7 +9,7 @@ module.exports.centralizedHandling = ((err, req, res, next) => {
     .send({
       // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === ErrCodeServer
-        ? 'На сервере произошла ошибка'
+        ? ErrCodeServerMessage
         : message,
     });
   next();
