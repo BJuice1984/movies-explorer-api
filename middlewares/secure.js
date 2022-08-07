@@ -6,10 +6,8 @@ const { disablePoweredBy } = require('../helpers/disablePoweredBy');
 
 const allowedCors = [
   'http://localhost:3000',
-  'http://api.mesto.bjuice.nomoredomains.xyz',
-  'http://mesto.bjuice.nomoredomains.xyz',
-  'https://api.mesto.bjuice.nomoredomains.xyz',
-  'https://mesto.bjuice.nomoredomains.xyz',
+  'http://api.diploma.bjuice.nomoredomains.sbs',
+  'https://api.diploma.bjuice.nomoredomains.sbs',
 ];
 
 const limiter = rateLimiter({

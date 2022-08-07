@@ -8,11 +8,12 @@ const { secure } = require('./middlewares/secure');
 const { centralizedHandling } = require('./middlewares/centralizedHandling');
 const routes = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { MONGO_ADRESS_DEV } = require('./helpers/config');
 
 const { NODE_ENV, PORT = 3000, MONGO_ADRESS } = process.env;
 
 const app = express();
-mongoose.connect(NODE_ENV === 'production' ? MONGO_ADRESS : 'mongodb://localhost:27017/moviesdb', {
+mongoose.connect(NODE_ENV === 'production' ? MONGO_ADRESS : MONGO_ADRESS_DEV, {
   useNewUrlParser: true,
 });
 
