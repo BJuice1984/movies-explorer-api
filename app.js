@@ -5,8 +5,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const { secure } = require('./middlewares/secure');
+const { centralizedHandling } = require('./middlewares/centralizedHandling');
 const routes = require('./routes/index');
-const { ErrCodeServer } = require('./costants/constants');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { NODE_ENV, PORT = 3000, MONGO_ADRESS } = process.env;
@@ -36,20 +36,7 @@ app.use(errorLogger);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
-  const { statusCode = ErrCodeServer, message } = err;
-
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === ErrCodeServer
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-  next();
-});
+app.use(centralizedHandling);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

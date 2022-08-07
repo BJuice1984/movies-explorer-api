@@ -57,10 +57,6 @@ module.exports.updateUser = (req, res, next) => {
     .orFail(() => { throw new NotFoundError('Ошибка. Пользователь не найден'); })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
-        next(new ConflictEmailError('Ошибка. Пользователь с таким email уже зарегистрирован'));
-        return;
-      }
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadDataError('Ошибка. Данные не корректны'));
         return;
