@@ -57,6 +57,10 @@ module.exports.updateUser = (req, res, next) => {
     .orFail(() => { throw new NotFoundError('Ошибка. Пользователь не найден'); })
     .then((user) => res.send(user))
     .catch((err) => {
+      if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
+        next(new ConflictEmailError('Ошибка. Пользователь с таким email уже зарегистрирован'));
+        return;
+      }
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadDataError('Ошибка. Данные не корректны'));
         return;
@@ -71,7 +75,6 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => generateToken({ _id: user._id }))
     .then((token) => {
-      console.log(token);
       res.cookie('jwt', token, {
         maxAge: 3600000 * 7 * 24,
         httpOnly: true,
