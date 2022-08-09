@@ -13,7 +13,7 @@
     "url": "git+https://github.com/BJuice1984/express-mesto-gha.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ilyas Sibgatullin",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/BJuice1984/express-mesto-gha/issues"
@@ -33,7 +33,10 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "express-rate-limit": "^6.5.1",
+    "express-slow-down": "^1.4.0",
     "express-winston": "^4.2.0",
+    "helmet": "^5.1.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.0",
     "validator": "^13.7.0",

@@ -4,33 +4,24 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
-const cors = require('cors');
+const { secure } = require('./middlewares/secure');
+const { centralizedHandling } = require('./middlewares/centralizedHandling');
 const routes = require('./routes/index');
-const { ErrCodeServer } = require('./costants/constants');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { MONGO_ADRESS_DEV } = require('./helpers/config');
 
-const { PORT } = process.env;
+const { NODE_ENV, PORT = 3000, MONGO_ADRESS } = process.env;
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/mestodb', {
+mongoose.connect(NODE_ENV === 'production' ? MONGO_ADRESS : MONGO_ADRESS_DEV, {
   useNewUrlParser: true,
 });
 
-const allowedCors = [
-  'http://api.mesto.bjuice.nomoredomains.xyz',
-  'http://mesto.bjuice.nomoredomains.xyz',
-  'https://api.mesto.bjuice.nomoredomains.xyz',
-  'https://mesto.bjuice.nomoredomains.xyz',
-];
+secure(app);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-app.use(cors({
-  origin: allowedCors,
-  credentials: true,
-}));
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -46,20 +37,7 @@ app.use(errorLogger);
 
 app.use(errors());
 
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
-  const { statusCode = ErrCodeServer, message } = err;
-
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === ErrCodeServer
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-});
+app.use(centralizedHandling);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
