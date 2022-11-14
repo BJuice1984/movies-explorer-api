@@ -8,6 +8,8 @@ const allowedCors = [
   'http://localhost:3007',
   'http://api.diploma.bjuice.nomoredomains.sbs',
   'https://api.diploma.bjuice.nomoredomains.sbs',
+  'http://diploma.bjuice.nomoredomains.icu',
+  'https://diploma.bjuice.nomoredomains.icu',
 ];
 
 const limiter = rateLimiter({
