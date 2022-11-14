@@ -5,7 +5,7 @@ const slowDown = require('express-slow-down');
 const { disablePoweredBy } = require('../helpers/disablePoweredBy');
 
 const allowedCors = [
-  'http://localhost:3000',
+  'http://localhost:3007',
   'http://api.diploma.bjuice.nomoredomains.sbs',
   'https://api.diploma.bjuice.nomoredomains.sbs',
 ];

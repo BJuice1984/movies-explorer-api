@@ -1,5 +1,5 @@
 const Movie = require('../models/movie');
-const { OkCodeCreated } = require('../costants/constants');
+const { OkCodeCreated, OkCodeDeleted } = require('../costants/constants');
 const NotFoundError = require('../errors/not-found-err');
 const ForbiddenError = require('../errors/forbidden-err');
 const BadDataError = require('../errors/bad-data-err');
@@ -43,6 +43,7 @@ module.exports.createMovie = (req, res, next) => {
     nameEN,
   })
     .then((movie) => res.status(OkCodeCreated).send({
+      _id: movie._id,
       country: movie.country,
       director: movie.director,
       duration: movie.duration,
@@ -69,12 +70,27 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params._id)
     .orFail(() => { throw new NotFoundError(NotFoundErrMessage); })
     .then((movie) => {
+      // console.log('delete', movie);
       if (!movie.owner.equals(req.user._id)) {
         return next(new ForbiddenError(ForbiddenErrMessage));
       }
-      return movie.remove()
-        .then(() => res.send({ message: 'Фильм удален из избранного' }));
+      return movie.remove();
     })
+    .then((movie) => res.status(OkCodeDeleted).send({
+      _id: movie._id,
+      country: movie.country,
+      director: movie.director,
+      duration: movie.duration,
+      year: movie.year,
+      description: movie.description,
+      image: movie.image,
+      trailerLink: movie.trailerLink,
+      thumbnail: movie.thumbnail,
+      owner: movie.owner,
+      movieId: movie.movieId,
+      nameRU: movie.nameRU,
+      nameEN: movie.nameEN,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadDataError(BadDataErrMessage));
