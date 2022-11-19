@@ -8,7 +8,7 @@ const {
 } = require('../costants/constants');
 
 module.exports.getMyMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
     .catch(next);
 };
@@ -70,7 +70,6 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params._id)
     .orFail(() => { throw new NotFoundError(NotFoundErrMessage); })
     .then((movie) => {
-      // console.log('delete', movie);
       if (!movie.owner.equals(req.user._id)) {
         return next(new ForbiddenError(ForbiddenErrMessage));
       }
