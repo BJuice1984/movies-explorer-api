@@ -92,5 +92,9 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.logout = (req, res) => {
-  res.clearCookie('jwt').send({ message: 'Выход' });
+  res.clearCookie('jwt', 'none', {
+    expires: new Date(Date.now() + 5 * 1000),
+    httpOnly: true,
+  })
+    .send({ message: 'Выход' });
 };
