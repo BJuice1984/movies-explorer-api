@@ -95,6 +95,8 @@ module.exports.logout = (req, res) => {
   res.clearCookie('jwt', 'none', {
     maxAge: 5000,
     httpOnly: true,
+    sameSite: 'none',
+    secure: true,
   })
     .send({ message: 'Выход' });
 };
