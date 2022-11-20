@@ -79,6 +79,8 @@ module.exports.login = (req, res, next) => {
     .then((user) => generateToken({ _id: user._id }))
     .then((token) => {
       res.cookie('jwt', token, {
+        domain: 'api.diploma.bjuice.nomoredomains.sbs',
+        path: '/',
         maxAge: 3600000 * 7 * 24,
         httpOnly: true,
         sameSite: 'none',
@@ -92,11 +94,9 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.logout = (req, res) => {
-  res.clearCookie('jwt', 'none', {
-    maxAge: 5000,
-    httpOnly: true,
-    sameSite: 'none',
-    secure: true,
+  res.clearCookie('jwt', {
+    domain: 'api.diploma.bjuice.nomoredomains.sbs',
+    path: '/',
   })
     .send({ message: 'Выход' });
 };
